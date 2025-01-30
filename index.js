@@ -11,7 +11,7 @@ const router = require("./Routes/users");
 const mongoose = require("mongoose");
 const errorHandler = require("./middleware/errHandler");
 
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 //allowing all the port to acess the backend server with ip.
 
@@ -38,6 +38,6 @@ app.use("/", router);
 
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}`);
 });
