@@ -1,25 +1,12 @@
 const errorHandler = (err, req, res, next) => {
+  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
 
-    // console.log("I am indiee error handler")
+  res.status(statusCode);
 
-    const statusCode = res.statusCode === 200 ? 500: res.statusCode;
+  res.json({
+    message: err.message,
+    stack: err.stack,
+  });
+};
 
-
-    res.status(statusCode);
-
-
-    res.json({
-
-        message: err.message,
-        stack: err.stack
-
-
-    })
-
-
-
-
-}
-
-
-module.exports  = errorHandler;
+module.exports = errorHandler;

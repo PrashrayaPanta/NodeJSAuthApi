@@ -1,159 +1,115 @@
 const bcrypt = require("bcryptjs");
 
-
 const jwt = require("jsonwebtoken");
-
-
 
 const asyncHandler = require("express-async-handler");
 
-
-const User = require("../model/User")
-
-
+const User = require("../model/User");
 
 const userCtrl = {
+  //!Register
 
+  register: asyncHandler(async (req, res) => {
+    // res.json({message: "Register"})
 
-    //!Register
+    const { username, email, password } = req.body;
 
-    register: asyncHandler(async(req, res) =>{
+    console.log(req.body);
 
-            // res.json({message: "Register"})
+    //! Validations
+    if (!username || !email || !password) {
+      throw new Error("All fields are required");
+    }
 
-            const {username, email, password} = req.body;
+    //! check if user alreday exist
 
+    const userExist = await User.findOne({ email });
 
-            console.log(req.body);
+    if (userExist) {
+      //   console.log("Hello");
+      throw new Error("This email has been already regfister");
+    }
 
-                 //! Validations
-            if(!username || !email || !password){
+    //! Hash the user password
 
-                throw new Error("All fields are required");
-            }
+    const salt = await bcrypt.genSalt(10);
 
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-            //! check if user alreday exist
-            
+    //! create the user
 
-            const userExist = await User.findOne({email});
+    const userCreated = await User.create({
+      username,
+      password: hashedPassword,
+      email,
+    });
 
+    //! send the response
 
-            if(userExist){
+    res.json({
+      message: "Register Success",
+      username: userCreated.username,
+      email: userCreated.email,
+      id: userCreated._id,
+    });
+  }),
 
-                    console.log("Hello");
-                    throw new Error("This email has been already regfister");
+  //!Login
 
+  login: asyncHandler(async (req, res) => {
+    // res.json({message:"Login"})
 
-            }
+    const { email, password } = req.body;
 
+    //! check if user email exits
 
-            //! Hash the user password
+    const user = await User.findOne({ email });
 
-            const salt = await bcrypt.genSalt(10);
+    if (!user) {
+      throw new Error("Invalid ceredentials");
+    }
 
-            const hashedPassword = await bcrypt.hash(password, salt);
+    //! check if user password is valid
 
+    const isMatch = await bcrypt.compare(password, user.password);
 
+    if (!isMatch) {
+      throw new Error("Invalid ceredentials");
+    }
 
-            //! create the user
+    //! Genrate the token
 
-            const userCreated = await User.create({
-                username, password:hashedPassword, email
-            })
+    const token = jwt.sign({ id: user._id }, "anykey", { expiresIn: "30d" });
 
-            //! send the response
+    res.json({
+      message: "Login Success",
+      token,
+      id: user._id,
+      email: user.email,
+      username: user.username,
+    });
+  }),
 
-            res.json({message:"Register Success", username: userCreated.username, email: userCreated.email, id: userCreated._id})
+  //! Profile
 
-    }),
+  Profile: asyncHandler(async (req, res) => {
+    // res.json({message:"Profile"})
 
+    //find the user
 
-    //!Login
+    // console.log("Hello you enter to ptofile toute of user")
 
+    // console.log("Profile entered");
 
-    login: asyncHandler(async(req, res) => {
+    //find the user
 
-        // res.json({message:"Login"})
+    const user = await User.findById(req.user).select("-password");
+    console.log(req.user);
 
+    res.json({ user });
 
-        const {email, password} = req.body;
-
-        //! check if user email exits
-
-        const user = await User.findOne({email});
-
-        if(!user){
-
-            throw new Error("Invalid ceredentials");
-
-        }
-
-
-        //! check if user password is valid
-
-        const isMatch = await bcrypt.compare(password, user.password)
-
-        if(!isMatch){
-
-            throw new Error("Invalid ceredentials");
-
-        }
-
-        //! Genrate the token
-
-        const token = jwt.sign({id: user._id}, "anykey", {expiresIn: "30d"});
-
-
-        res.json({
-
-            message: "Login Success",
-            token,
-            id:user._id,
-            email: user.email,
-            username: user.username
-
-        })
-
-
-
-
-
-
-
-    }),
-
-
-    //! Profile
-
-
-    Profile: asyncHandler(async(req, res) =>{
-
-        // res.json({message:"Profile"})
-
-        //find the user
-
-        // console.log("Hello you enter to ptofile toute of user")
-
-
-        // console.log("Profile entered");
-
-    
-        
-        
-        //find the user
-
-        const user = await User.findById(req.user).select("-password");
-        console.log(req.user);
-
-        res.json({user});
-
-
-        //     console.log(user)
-
-    })
-
-}
-
+    //     console.log(user)
+  }),
+};
 
 module.exports = userCtrl;

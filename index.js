@@ -9,6 +9,7 @@ const app = express();
 const router = require("./Routes/users");
 
 const mongoose = require("mongoose");
+
 const errorHandler = require("./middleware/errHandler");
 
 const PORT = process.env.PORT || 3000;
