@@ -93,14 +93,6 @@ const userCtrl = {
   //! Profile
 
   Profile: asyncHandler(async (req, res) => {
-    // res.json({message:"Profile"})
-
-    //find the user
-
-    // console.log("Hello you enter to ptofile toute of user")
-
-    // console.log("Profile entered");
-
     //find the user
 
     const user = await User.findById(req.user).select("-password");

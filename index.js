@@ -12,6 +12,8 @@ const mongoose = require("mongoose");
 
 const errorHandler = require("./middleware/errHandler");
 
+const postRoute = require("./Routes/post");
+
 const PORT = process.env.PORT || 3000;
 
 //allowing all the port to acess the backend server with ip.
@@ -33,7 +35,9 @@ mongoose
 app.use(express.json()); //passing incoming json data from the client
 
 //!Routes
-app.use("/", router);
+app.use("/api/users", router);
+
+app.use("/api/posts", postRoute);
 
 //!Error handler
 
