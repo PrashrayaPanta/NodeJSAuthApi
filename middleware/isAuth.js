@@ -9,7 +9,7 @@ const isAuthenticated = async (req, res, next) => {
 
   // console.log(headerObject)
 
-  const token = headerObject.authorization.split(" ")[1];
+  const token = headerObject?.authorization?.split(" ")[1];
 
   // verify the token
 

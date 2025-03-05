@@ -16,15 +16,29 @@ const postCtrl = {
       author: req.user,
     });
 
+    console.log(postCreated);
+
+    res.status(201).json({ message: "post created succesfully", postCreated });
+
     userFound.posts.push(postCreated);
 
     await userFound.save();
+  }),
+
+  deletePost: asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const post = await Post.findByIdAndDelete(id);
+
+    console.log(post);
   }),
 
   viewPost: asyncHandler(async (req, res) => {
     const posts = await Post.find();
 
     console.log(posts);
+
+    res.status(201).json({ message: "viewed", posts });
 
     //
   }),
