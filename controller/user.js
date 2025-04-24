@@ -6,10 +6,19 @@ const asyncHandler = require("express-async-handler");
 
 const User = require("../model/User");
 
+
+
+
 const userCtrl = {
+
   //!Register
 
+
+ 
   register: asyncHandler(async (req, res) => {
+
+
+    console.log("Helllo i am register")
     // res.json({message: "Register"})
 
     const { username, email, password } = req.body;

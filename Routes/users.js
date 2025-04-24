@@ -12,3 +12,5 @@ router.post("/login", userCtrl.login);
 router.get("/profile", isAuthenticated, userCtrl.Profile);
 
 module.exports = router;
+
+
