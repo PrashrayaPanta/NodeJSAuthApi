@@ -8,11 +8,6 @@ const User = require("../model/User");
 const File = require("../model/File");
 
 
-console.log("I am firest in post controler")
-
-
-
-
 const postCtrl = {
   createPost: asyncHandler(async (req, res) => {
     // const user = await User.findById(req.user).select("-password");
@@ -60,28 +55,37 @@ const postCtrl = {
       })
     );
 
-    const postCreated = await Post.create({
+    const post = await Post.create({
       title,
       description,
       author: req.user,
       images,
     });
 
-    console.log(postCreated);
 
-    res.status(201).json({ message: "post created succesfully", postCreated });
+    res.status(201).json({ message: "post created succesfully", post });
 
-    userFound.posts.push(postCreated);
+    userFound.posts.push(post)
 
     await userFound.save();
+
+
   }),
 
   deletePost: asyncHandler(async (req, res) => {
-    const { id } = req.params;
 
+
+    const { id } = req.params;
     const post = await Post.findByIdAndDelete(id);
 
-    console.log(post);
+    const userFound = await User.findById(req.user);
+
+
+    userFound.posts.pop(post);
+
+    
+    await userFound.save()
+
   }),
 
   viewPost: asyncHandler(async (req, res) => {
@@ -89,7 +93,6 @@ const postCtrl = {
     console.log("Hello I am under view Post")
     const posts = await Post.find();
 
-    console.log(posts);
 
     res.status(201).json({ message: "viewed", posts });
 

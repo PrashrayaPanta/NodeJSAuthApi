@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 
 const User = require("../model/User");
+const Post = require("../model/Post");
 
 
 
@@ -105,9 +106,15 @@ const userCtrl = {
     //find the user
 
     const user = await User.findById(req.user).select("-password");
-    console.log(req.user);
+    // console.log(req.user);
 
-    res.json({ user });
+
+    if(!user){
+      return res.status(404).json({message:"User Not Found"})
+    }
+
+    res.status(200).json({user, message:"Fetched Only my post"})
+    
 
     //     console.log(user)
   }),
