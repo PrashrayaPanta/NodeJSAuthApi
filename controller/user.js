@@ -118,6 +118,58 @@ const userCtrl = {
 
     //     console.log(user)
   }),
+
+
+
+  EditProfile: asyncHandler(async(req, res) =>{
+
+  
+    const {username, email} = req.body;
+
+    //! Returned the document after updation takes place if new:true
+    const updatedUser =   await User.findByIdAndUpdate(req.user, {username}, {new:true});
+
+
+    res.status(200).json({user: updatedUser});
+
+
+
+  }),
+
+  EditPassword: asyncHandler(async(req, res) =>{
+
+       //! Updating the password 
+
+
+       const {OldPassword} = req.body;
+
+
+       const user = await User.findById(req.user);
+   
+   
+       const isMatch = await bcrypt.compare(OldPassword, user.password);
+   
+       if(!isMatch){
+         return res.json({message:"You cannot change the paasssword"})
+       }
+   
+   
+       console.log("You can change the password");
+   
+       const {newPassword} = req.body;
+
+       //!hash the password
+
+       const salt = await bcrypt.genSalt(10);
+
+       const hashedPassword = await bcrypt.hash(newPassword, salt)
+   
+       const userupdated = await User.findByIdAndUpdate(req.user, {password: hashedPassword}, {new:true});
+   
+       res.json({user:userupdated});
+  })
+
+
 };
 
 module.exports = userCtrl;

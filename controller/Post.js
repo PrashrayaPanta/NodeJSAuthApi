@@ -9,6 +9,8 @@ const File = require("../model/File");
 
 
 const postCtrl = {
+
+  
   createPost: asyncHandler(async (req, res) => {
     // const user = await User.findById(req.user).select("-password");
 
