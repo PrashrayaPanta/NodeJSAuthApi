@@ -60,5 +60,6 @@ postRoute.delete("/delete/:id", isAuthenticated, postCtrl.deletePost);
 
 
 
+
 module.exports = postRoute;
 

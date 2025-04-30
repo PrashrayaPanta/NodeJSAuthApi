@@ -104,19 +104,18 @@ const userCtrl = {
 
   Profile: asyncHandler(async (req, res) => {
     //find the user
-
-    const user = await User.findById(req.user).select("-password");
-    // console.log(req.user);
-
+    const user = await User.findById(req.user)
+      .select("-password")
+      .populate({
+        path: 'posts',
+        select: 'title description images createdAt'
+      });
 
     if(!user){
       return res.status(404).json({message:"User Not Found"})
     }
 
-    res.status(200).json({user, message:"Fetched Only my post"})
-    
-
-    //     console.log(user)
+    return res.status(200).json({user, message:"Fetched Only my post"})
   }),
 
 
@@ -124,7 +123,7 @@ const userCtrl = {
   EditProfile: asyncHandler(async(req, res) =>{
 
   
-    const {username, email} = req.body;
+    const {username} = req.body;
 
     //! Returned the document after updation takes place if new:true
     const updatedUser =   await User.findByIdAndUpdate(req.user, {username}, {new:true});

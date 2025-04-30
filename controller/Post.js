@@ -67,7 +67,14 @@ const postCtrl = {
 
     res.status(201).json({ message: "post created succesfully", post });
 
-    userFound.posts.push(post)
+    userFound.posts.push(post);
+
+    
+
+
+    // console.log(post);
+
+   
 
     await userFound.save();
 
@@ -75,25 +82,46 @@ const postCtrl = {
   }),
 
   deletePost: asyncHandler(async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Find the post and verify the user owns it
+      const post = await Post.findOne({ _id: id, author: req.user });
+      
+      if (!post) {
+        return res.status(404).json({ 
+          status: "Failed", 
+          message: " you don't have permission to delete this post" 
+        });
+      }
 
+      // Delete the post
+     const afterDeletion = await Post.findByIdAndDelete(id, {new: true});
 
-    const { id } = req.params;
-    const post = await Post.findByIdAndDelete(id);
+      // Remove the post from user's posts array
+      await User.findByIdAndUpdate(
+        req.user,
+        { $pull: { posts: id } },
+        { new: true }
+      );
 
-    const userFound = await User.findById(req.user);
-
-
-    userFound.posts.pop(post);
-
-    
-    await userFound.save()
-
+      res.json({
+        status: "Success",
+        message: "Post deleted successfully",
+        deletedPost: afterDeletion
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: "Failed",
+        message: "Error deleting post",
+        error: error.message
+      });
+    }
   }),
 
   viewPost: asyncHandler(async (req, res) => {
 
-    console.log("Hello I am under view Post")
-    const posts = await Post.find();
+    const posts = await Post.find().populate("author", "username");
 
 
     res.status(201).json({ message: "viewed", posts });
