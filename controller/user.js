@@ -7,19 +7,11 @@ const asyncHandler = require("express-async-handler");
 const User = require("../model/User");
 const Post = require("../model/Post");
 
-
-
-
 const userCtrl = {
-
   //!Register
 
-
- 
   register: asyncHandler(async (req, res) => {
-
-
-    console.log("Helllo i am register")
+    console.log("Helllo i am register");
     // res.json({message: "Register"})
 
     const { username, email, password } = req.body;
@@ -104,71 +96,64 @@ const userCtrl = {
 
   Profile: asyncHandler(async (req, res) => {
     //find the user
-    const user = await User.findById(req.user)
-      .select("-password")
-      .populate({
-        path: 'posts',
-        select: 'title description images createdAt'
-      });
+    const user = await User.findById(req.user).select("-password").populate({
+      path: "posts",
+      select: "title description images createdAt",
+    });
 
-    if(!user){
-      return res.status(404).json({message:"User Not Found"})
+    if (!user) {
+      return res.status(404).json({ message: "User Not Found" });
     }
 
-    return res.status(200).json({user, message:"Fetched Only my post"})
+    return res.status(200).json({ user, message: "Fetched Only my post" });
   }),
 
-
-
-  EditProfile: asyncHandler(async(req, res) =>{
-
-  
-    const {username} = req.body;
+  EditProfile: asyncHandler(async (req, res) => {
+    const { username } = req.body;
 
     //! Returned the document after updation takes place if new:true
-    const updatedUser =   await User.findByIdAndUpdate(req.user, {username}, {new:true});
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user,
+      { username },
+      { new: true }
+    ).select("-posts -password");
 
-
-    res.status(200).json({user: updatedUser});
-
-
-
+    res.status(201).json({ user: updatedUser });
   }),
 
-  EditPassword: asyncHandler(async(req, res) =>{
+  EditPassword: asyncHandler(async (req, res) => {
+    //! Updating the password
 
-       //! Updating the password 
+    const { OldPassword } = req.body;
 
+    const user = await User.findById(req.user);
 
-       const {OldPassword} = req.body;
+    const isMatch = await bcrypt.compare(OldPassword, user.password);
 
+    if (!isMatch) {
+      return res
+        .json({ message: "You cannot change the paasssword" })
+        .status(401);
+    }
 
-       const user = await User.findById(req.user);
-   
-   
-       const isMatch = await bcrypt.compare(OldPassword, user.password);
-   
-       if(!isMatch){
-         return res.json({message:"You cannot change the paasssword"})
-       }
-   
-   
-       console.log("You can change the password");
-   
-       const {newPassword} = req.body;
+    console.log("You can change the password");
 
-       //!hash the password
+    const { newPassword } = req.body;
 
-       const salt = await bcrypt.genSalt(10);
+    //!hash the password
 
-       const hashedPassword = await bcrypt.hash(newPassword, salt)
-   
-       const userupdated = await User.findByIdAndUpdate(req.user, {password: hashedPassword}, {new:true});
-   
-       res.json({user:userupdated});
-  })
+    const salt = await bcrypt.genSalt(10);
 
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
 
+    const userupdated = await User.findByIdAndUpdate(
+      req.user,
+      { password: hashedPassword },
+      { new: true }
+    ).select("-posts -password");
+
+    res.json({ user: userupdated }).status(201);
+  }),
 };
 
 module.exports = userCtrl;
