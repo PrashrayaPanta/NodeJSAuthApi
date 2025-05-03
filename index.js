@@ -30,9 +30,6 @@ mongoose
   .then(() => console.log("DB connected succesfully"))
   .catch((error) => console.log(error));
 
-
-
-
 //!Middlewares
 
 app.use(express.json()); //passing incoming json data from the client
@@ -49,6 +46,3 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
-
-
-

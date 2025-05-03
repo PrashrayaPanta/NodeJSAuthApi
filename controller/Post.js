@@ -1,4 +1,7 @@
 const asyncHandler = require("express-async-handler");
+
+const mongoose = require("mongoose");
+
 const Post = require("../model/Post");
 
 const User = require("../model/User");
@@ -9,13 +12,7 @@ const postCtrl = {
   createPost: asyncHandler(async (req, res) => {
     // const user = await User.findById(req.user).select("-password");
 
-    console.log(req.user);
-
     const userFound = await User.findById(req.user);
-
-    // console.log("Hellobbhj ");
-
-    console.log(userFound);
 
     const { title, description } = req.body;
 
@@ -58,9 +55,7 @@ const postCtrl = {
 
     res.status(201).json({ message: "post created succesfully", post });
 
-    userFound?.posts.push(post);
-
-    // console.log(post);
+    userFound.posts.push(post);
 
     await userFound.save();
   }),
@@ -109,6 +104,45 @@ const postCtrl = {
     res.status(201).json({ message: "viewed", posts });
 
     //
+  }),
+
+  getCertainPost: asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const post = await Post.findById(id).populate("author", "username");
+
+    if (!post) {
+      return res.status(404).json({
+        status: "Failed",
+        message: "Post not found",
+      });
+    }
+
+    res.json({
+      status: "Success",
+      message: "Post fetched successfully",
+      post,
+    });
+  }),
+
+  LatestPosts: asyncHandler(async (req, res) => {
+    const posts = await Post.find()
+      .limit(2)
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .populate("author", "username");
+
+    // Extract only username not only field
+    // .limit(5)
+    // .populate("author", "username");
+
+    console.log(posts);
+
+    res.status(201).json({
+      status: "success",
+      message: "Latest Post fetched succesfully",
+      posts,
+    });
   }),
 };
 

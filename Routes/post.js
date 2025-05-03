@@ -6,13 +6,10 @@ const isAuthenticated = require("../middleware/isAuth");
 
 const postRoute = express.Router();
 
-
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 const cloudinary = require("cloudinary").v2;
-
-
 
 //! Configure cloudinary
 
@@ -56,10 +53,10 @@ postRoute.post(
 
 postRoute.get("/get", postCtrl.viewPost);
 
+postRoute.get("/get/latestpost", postCtrl.LatestPosts);
+
+postRoute.get("/get/:id", postCtrl.getCertainPost);
+
 postRoute.delete("/delete/:id", isAuthenticated, postCtrl.deletePost);
 
-
-
-
 module.exports = postRoute;
-
