@@ -75,7 +75,9 @@ const postCtrl = {
       }
 
       // Delete the post
-      const afterDeletion = await Post.findByIdAndDelete(id, { return: true });
+      const afterDeletion = await Post.findByIdAndDelete(id, { new: true });
+
+      console.log(afterDeletion);
 
       // Remove the post from user's posts array
       await User.findByIdAndUpdate(
@@ -136,11 +138,24 @@ const postCtrl = {
     // .limit(5)
     // .populate("author", "username");
 
-    console.log(posts);
+    // console.log(posts);
 
     res.status(201).json({
       status: "success",
       message: "Latest Post fetched succesfully",
+      posts,
+    });
+  }),
+
+  searchPost: asyncHandler(async (req, res) => {
+    const { query } = req;
+
+    const posts = await Post.find(query);
+
+    res.status(200).json({
+      status: "Success",
+      message: "Search results",
+      count: posts.length,
       posts,
     });
   }),

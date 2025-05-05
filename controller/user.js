@@ -136,8 +136,6 @@ const userCtrl = {
         .status(401);
     }
 
-    console.log("You can change the password");
-
     const { newPassword } = req.body;
 
     //!hash the password

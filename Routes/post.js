@@ -55,6 +55,8 @@ postRoute.get("/get", postCtrl.viewPost);
 
 postRoute.get("/get/latestpost", postCtrl.LatestPosts);
 
+postRoute.get("/get/search", postCtrl.searchPost);
+
 postRoute.get("/get/:id", postCtrl.getCertainPost);
 
 postRoute.delete("/delete/:id", isAuthenticated, postCtrl.deletePost);
