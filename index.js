@@ -25,7 +25,7 @@ app.use(cors());
 mongoose
   .connect(
     process.env.Mongodb_URI ||
-      "mongodb+srv://prashrayapanta33:aURkXvfqqkRTvoZQ@cluster0.qby1x.mongodb.net/"
+    "mongodb+srv://prashrayapanta33:NFymZXVCLFQLJTkh@blogapp.60shucy.mongodb.net/"
   )
   .then(() => console.log("DB connected succesfully"))
   .catch((error) => console.log(error));
