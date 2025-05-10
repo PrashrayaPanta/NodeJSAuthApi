@@ -1,11 +1,14 @@
 const express = require("express");
-const testController = require("../controller/Test");
+
+
+const testController = require("../controller/Test.js");
+
+
 
 const testRouter = express.Router();
 
-testRouter.get("/", (req, res) => {
-  const message = testController();
-  res.send(message); // Send "Hello World" as the response
-});
+
+testRouter.get("/", testController);
+
 
 module.exports = testRouter;
