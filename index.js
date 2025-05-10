@@ -14,6 +14,9 @@ const errorHandler = require("./middleware/errHandler");
 
 const postRoute = require("./Routes/post");
 
+
+const testRoute = require("./Routes/testRoute");
+
 const PORT = process.env.PORT || 3000;
 
 //allowing all the port to acess the backend server with ip.
@@ -24,9 +27,9 @@ app.use(cors());
 
 mongoose
   .connect(
-    process.env.Mongodb_URI ||
-    "mongodb+srv://prashrayapanta33:NFymZXVCLFQLJTkh@blogapp.60shucy.mongodb.net/"
+    process.env.Mongodb_URI
   )
+
   .then(() => console.log("DB connected succesfully"))
   .catch((error) => console.log(error));
 
@@ -37,7 +40,13 @@ app.use(express.json()); //passing incoming json data from the client
 //!Routes
 app.use("/api/users", router);
 
+
 app.use("/api/posts", postRoute);
+
+
+app.use("/api/test",testRoute);
+
+
 
 //!Error handler
 

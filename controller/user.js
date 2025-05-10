@@ -11,8 +11,6 @@ const userCtrl = {
   //!Register
 
   register: asyncHandler(async (req, res) => {
-    console.log("Helllo i am register");
-    // res.json({message: "Register"})
 
     const { username, email, password } = req.body;
 
@@ -95,6 +93,13 @@ const userCtrl = {
   //! Profile
 
   Profile: asyncHandler(async (req, res) => {
+
+
+    const user1 = await User.findById(req.user);
+
+    // console.log(user1);
+    
+
     //find the user
     const user = await User.findById(req.user).select("-password").populate({
       path: "posts",

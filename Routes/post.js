@@ -7,6 +7,7 @@ const isAuthenticated = require("../middleware/isAuth");
 const postRoute = express.Router();
 
 const multer = require("multer");
+
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 const cloudinary = require("cloudinary").v2;

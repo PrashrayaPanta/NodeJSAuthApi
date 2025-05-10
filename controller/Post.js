@@ -8,9 +8,14 @@ const User = require("../model/User");
 
 const File = require("../model/File");
 
+
+
+
 const postCtrl = {
   createPost: asyncHandler(async (req, res) => {
     // const user = await User.findById(req.user).select("-password");
+
+    // console.log(req.user)
 
     const userFound = await User.findById(req.user);
 
@@ -53,11 +58,13 @@ const postCtrl = {
       images,
     });
 
-    res.status(201).json({ message: "post created succesfully", post });
+    console.log(userFound);
 
-    userFound.posts.push(post);
+    userFound?.posts.push(post);
 
     await userFound.save();
+
+    return res.status(201).json({ message: "post created succesfully", post });
   }),
 
   deletePost: asyncHandler(async (req, res) => {
@@ -160,5 +167,11 @@ const postCtrl = {
     });
   }),
 };
+
+
+
+ 
+
+
 
 module.exports = postCtrl;

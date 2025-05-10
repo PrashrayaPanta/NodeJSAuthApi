@@ -32,7 +32,9 @@ const isAuthenticated = async (req, res, next) => {
   // console.log(user_id);
 
   if (verifyToken) {
+    console.log(verifyToken)
     req.user = verifyToken.id;
+    console.log(req.user)
     next();
   } else {
     const err = new Error("Token Expired plz login in");
