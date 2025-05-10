@@ -17,6 +17,11 @@ const postRoute = require("./Routes/post");
 
 const testRoute = require("./Routes/testRoute");
 
+
+
+
+const postviewroute = require("./Routes/postviewRoute");
+
 const PORT = process.env.PORT || 3000;
 
 //allowing all the port to acess the backend server with ip.
@@ -45,6 +50,9 @@ app.use("/api/posts", postRoute);
 
 
 app.use("/api/test",testRoute);
+
+
+app.use("/api/postviewcontroller", postviewroute);
 
 
 
