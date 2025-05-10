@@ -15,12 +15,6 @@ const errorHandler = require("./middleware/errHandler");
 const postRoute = require("./Routes/post");
 
 
-const testRoute = require("./Routes/testRoute");
-
-
-
-
-const postviewroute = require("./Routes/postviewRoute");
 
 const PORT = process.env.PORT || 3000;
 
@@ -49,10 +43,6 @@ app.use("/api/users", router);
 app.use("/api/posts", postRoute);
 
 
-app.use("/api/test",testRoute);
-
-
-app.use("/api/postviewcontroller", postviewroute);
 
 
 
