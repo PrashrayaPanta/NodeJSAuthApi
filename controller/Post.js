@@ -148,7 +148,6 @@ const postCtrl = {
 
     res.status(201).json({
       status: "success",
-      message: "Latest Post fetched succesfully",
       posts,
     });
   }),
