@@ -129,7 +129,6 @@ const postCtrl = {
 
     res.json({
       status: "Success",
-      message: "Post fetched successfully",
       post,
     });
   }),
