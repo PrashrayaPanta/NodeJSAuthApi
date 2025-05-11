@@ -110,7 +110,7 @@ const postCtrl = {
   viewPost: asyncHandler(async (req, res) => {
     const posts = await Post.find().populate("author", "username");
 
-    res.status(201).json({ message: "viewed", posts });
+    res.status(201).json({  posts });
 
     //
   }),
