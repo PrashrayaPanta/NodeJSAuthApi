@@ -14,8 +14,6 @@ const errorHandler = require("./middleware/errHandler");
 
 const postRoute = require("./Routes/post");
 
-
-
 const PORT = process.env.PORT || 3000;
 
 //allowing all the port to acess the backend server with ip.

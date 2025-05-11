@@ -123,7 +123,7 @@ const userCtrl = {
       { new: true }
     ).select("-posts -password");
 
-    res.status(201).json({ user: updatedUser });
+    res.status(201).json({message:"Updated Succesfully" ,user: updatedUser });
   }),
 
   EditPassword: asyncHandler(async (req, res) => {
@@ -155,7 +155,7 @@ const userCtrl = {
       { new: true }
     ).select("-posts -password");
 
-    res.json({ user: userupdated }).status(201);
+    res.json({message:"Updated the password", user: userupdated }).status(201);
   }),
 };
 
