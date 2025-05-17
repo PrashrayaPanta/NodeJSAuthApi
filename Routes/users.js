@@ -3,16 +3,16 @@ const userCtrl = require("../controller/user");
 
 const isAuthenticated = require("../middleware/isAuth");
 
-const router = express.Router();
+const userRoute = express.Router();
 
-router.post("/register", userCtrl.register);
+userRoute.post("/register", userCtrl.register);
 
-router.post("/login", userCtrl.login);
+userRoute.post("/login", userCtrl.login);
 
-router.get("/profile", isAuthenticated, userCtrl.Profile);
+userRoute.get("/profile", isAuthenticated, userCtrl.Profile);
 
-router.put("/profile/edit", isAuthenticated, userCtrl.EditProfile);
+userRoute.put("/profile/edit", isAuthenticated, userCtrl.EditProfile);
 
-router.put("/profile/password", isAuthenticated, userCtrl.EditPassword);
+userRoute.put("/profile/password", isAuthenticated, userCtrl.EditPassword);
 
-module.exports = router;
+module.exports = userRoute

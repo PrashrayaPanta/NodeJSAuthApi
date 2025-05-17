@@ -6,7 +6,7 @@ require("dotenv").config();
 
 const app = express();
 
-const router = require("./Routes/users");
+const userRoute = require("./Routes/users");
 
 const mongoose = require("mongoose");
 
@@ -35,13 +35,10 @@ mongoose
 app.use(express.json()); //passing incoming json data from the client
 
 //!Routes
-app.use("/api/users", router);
+app.use("/api/users", userRoute);
 
 
 app.use("/api/posts", postRoute);
-
-
-
 
 
 //!Error handler

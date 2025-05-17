@@ -62,13 +62,14 @@ const postCtrl = {
 
     userFound?.posts.push(post);
 
+    //! Save the user
     await userFound.save();
 
     return res.status(201).json({ message: "post created succesfully", post });
   }),
 
   deletePost: asyncHandler(async (req, res) => {
-    try {
+
       const { id } = req.params;
 
       // Find the post and verify the user owns it
@@ -98,13 +99,7 @@ const postCtrl = {
         message: "Post deleted successfully",
         deletedPost: afterDeletion,
       });
-    } catch (error) {
-      res.status(500).json({
-        status: "Failed",
-        message: "Error deleting post",
-        error: error.message,
-      });
-    }
+    
   }),
 
   viewPost: asyncHandler(async (req, res) => {
