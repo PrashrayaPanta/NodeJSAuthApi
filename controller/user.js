@@ -1,111 +1,194 @@
 const bcrypt = require("bcryptjs");
+
 const jwt = require("jsonwebtoken");
+
 const asyncHandler = require("express-async-handler");
+
 const User = require("../model/User");
-const ServerResponse = require("../utils/serverResponse");
+
+const File = require("../model/File");
 
 const userCtrl = {
-  //! Register
+  //!Register
+
   register: asyncHandler(async (req, res) => {
     const { username, email, password } = req.body;
 
-    if (!username || !email || !password) {
+    //! Validations
+    if (!username || !email || !password || req.files.length === 0) {
       throw new Error("All fields are required");
     }
 
+    console.log(req.body);
+
+    // Upload  each image public_id and Url in db
+    const images = await Promise.all(
+      req.files.map(async (file) => {
+        console.log("Getted all the object for sending to db");
+        //Save the images into our database
+
+        const newFile = new File({
+          url: file.path,
+          public_id: file.filename,
+        });
+
+        await newFile.save();
+
+        console.log(newFile);
+
+        return {
+          url: newFile.url,
+          public_id: newFile.public_id,
+        };
+      })
+    );
+
+    // console.log(images)
+
+    // console.log(images)
+
+    //! check if user alreday exist
+
     const userExist = await User.findOne({ email });
+
     if (userExist) {
-      throw new Error("This email has already been registered");
+      //   console.log("Hello");
+      throw new Error("This email has been already regfister");
     }
+
+    //! Hash the user password
 
     const salt = await bcrypt.genSalt(10);
+
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const userCreated = await User.create({
-      username,
-      password: hashedPassword,
-      email,
-    });
+    //! create the user
 
-    ServerResponse(res, 201, {
-      id: userCreated._id,
-      username: userCreated.username,
-      email: userCreated.email,
-    }, "Register Success");
+    images.map(async (profileimage) => {
+      
+      const userCreated = await User.create({
+        username,
+        password: hashedPassword,
+        email,
+        profileImageUrl: profileimage.url,
+      });
+
+      console.log(userCreated);
+
+      //! send the response
+
+      res.json({
+        message: "Register Success",
+        username: userCreated.username,
+        email: userCreated.email,
+        id: userCreated._id,
+      });
+    });
   }),
 
-  //! Login
+  //!Login
+
   login: asyncHandler(async (req, res) => {
+    // res.json({message:"Login"})
+
     const { email, password } = req.body;
 
+    //! check if user email exits
+
     const user = await User.findOne({ email });
+
     if (!user) {
-      throw new Error("Invalid credentials");
+      throw new Error("Invalid ceredentials");
     }
 
+    //! check if user password is valid
+
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
-      throw new Error("Invalid credentials");
+      throw new Error("Invalid ceredentials");
     }
+
+    //! Genrate the token
 
     const token = jwt.sign({ id: user._id }, "anykey", { expiresIn: "30d" });
 
-    ServerResponse(res, 200, {
+    res.json({
+      message: "Login Success",
       token,
       id: user._id,
       email: user.email,
       username: user.username,
-    }, "Login Success");
+    });
   }),
 
   //! Profile
+
   Profile: asyncHandler(async (req, res) => {
+    // console.log(user1);
+
+    //find the user
     const user = await User.findById(req.user).select("-password").populate({
       path: "posts",
       select: "title description images createdAt",
     });
 
     if (!user) {
-      return ServerResponse(res, 404, null, "User Not Found");
+      return res.status(404).json({ message: "User Not Found" });
     }
 
-    ServerResponse(res, 200, user, "Fetched Profile Successfully");
+    // return res.status(200).json({ user, message: "Fetched Only my post" });
+
+    // ServerResponse(200, {user,  "Fetched Only my post" }, req, res);
+
+    ServerResponse(200);
   }),
 
-  //! Edit Profile
   EditProfile: asyncHandler(async (req, res) => {
     const { username } = req.body;
 
+    //! Returned the document after updation takes place if new:true
     const updatedUser = await User.findByIdAndUpdate(
       req.user,
       { username },
       { new: true }
     ).select("-posts -password");
 
-    ServerResponse(res, 200, updatedUser, "Profile Updated Successfully");
+    res.status(201).json({ message: "Updated Succesfully", user: updatedUser });
   }),
 
-  //! Edit Password
   EditPassword: asyncHandler(async (req, res) => {
-    const { OldPassword, newPassword } = req.body;
+    //! Updating the password
+
+    const { OldPassword } = req.body;
 
     const user = await User.findById(req.user);
+
     const isMatch = await bcrypt.compare(OldPassword, user.password);
 
     if (!isMatch) {
-      return ServerResponse(res, 401, null, "Old password is incorrect");
+      return res
+        .json({ message: "You cannot change the paasssword" })
+        .status(401);
     }
 
+    const { newPassword } = req.body;
+
+    //!hash the password
+
     const salt = await bcrypt.genSalt(10);
+
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-    const userUpdated = await User.findByIdAndUpdate(
+    const userupdated = await User.findByIdAndUpdate(
       req.user,
       { password: hashedPassword },
       { new: true }
     ).select("-posts -password");
 
-    ServerResponse(res, 200, userUpdated, "Password Updated Successfully");
+    res
+      .json({ message: "Updated the password", user: userupdated })
+      .status(201);
   }),
 };
 

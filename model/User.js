@@ -21,6 +21,14 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
+    profileImageUrl: {
+      type: String,
+      required:true,
+    },
+    // profileImagePublicId: {
+    //   type: String,
+    // },
+
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,

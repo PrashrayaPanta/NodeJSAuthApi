@@ -30,6 +30,7 @@ const postSchema = new mongoose.Schema(
         },
       },
     ],
+   
   },
 
   {

@@ -20,18 +20,21 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-//!Configure multer storage cloudinary
+//!Configure multer storage cloudinary for image
 
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "nodejscreatepost",
+    folder: "nodejscreatepostImages",
     allowedFormat: ["png", "jpeg"],
     // public_id: (req, file) => file.fieldname + "_" + Date.now(),
   },
 });
 
-///!Configure Multer
+
+
+
+///!Configure Multer for uploading image
 
 const upload = multer({
   storage,
@@ -45,18 +48,25 @@ const upload = multer({
   },
 });
 
+
+
+
 postRoute.post(
   "/create",
   isAuthenticated,
+  // upload1.single("video"),
   upload.array("images"),
   postCtrl.createPost
 );
 
-postRoute.get("/get", postCtrl.viewPost);
+postRoute.get("/get", postCtrl.getAllPost);
 
 postRoute.get("/get/latestpost", postCtrl.LatestPosts);
 
 postRoute.get("/get/search", postCtrl.searchPost);
+
+
+postRoute.patch("/update/:id", isAuthenticated, postCtrl.updateCertainPost);
 
 postRoute.get("/get/:id", postCtrl.getCertainPost);
 

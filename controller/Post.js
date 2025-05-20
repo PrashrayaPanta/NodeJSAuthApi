@@ -10,14 +10,17 @@ const File = require("../model/File");
 
 
 
-
 const postCtrl = {
+
+
   createPost: asyncHandler(async (req, res) => {
-    // const user = await User.findById(req.user).select("-password");
 
-    // console.log(req.user)
-
+    console.log("I am inside createPost")
+   
     const userFound = await User.findById(req.user);
+
+
+    console.log(userFound);
 
     const { title, description } = req.body;
 
@@ -78,12 +81,14 @@ const postCtrl = {
       if (!post) {
         return res.status(404).json({
           status: "Failed",
-          message: " you don't have permission to delete this post",
+          message: "you don't have permission to delete this post",
         });
       }
 
       // Delete the post
-      const afterDeletion = await Post.findByIdAndDelete(id, { new: true });
+
+      // {new:true} doesnt show any effect on delete
+      const afterDeletion = await Post.findByIdAndDelete(id);
 
       console.log(afterDeletion);
 
@@ -102,7 +107,7 @@ const postCtrl = {
     
   }),
 
-  viewPost: asyncHandler(async (req, res) => {
+  getAllPost: asyncHandler(async (req, res) => {
     const posts = await Post.find().populate("author", "username");
 
     res.status(201).json({  posts });
@@ -147,6 +152,10 @@ const postCtrl = {
     });
   }),
 
+
+
+  //! Search Post
+
   searchPost: asyncHandler(async (req, res) => {
     const { query } = req;
 
@@ -159,6 +168,52 @@ const postCtrl = {
       posts,
     });
   }),
+
+
+
+  //! Update the post
+
+
+  updateCertainPost: asyncHandler(async (req, res) => {
+
+    const { id } = req.params;
+
+    const { title, description } = req.body;
+
+    // Find the post and verify the user owns it
+    const post = await Post.findOne({ _id: id, author: req.user });
+
+    if (!post) {
+      return res.status(404).json({
+        status: "Failed",
+        message: " you don't have permission to update this post",
+      });
+    }
+
+    // Update the post
+    const updatedPost = await Post.findByIdAndUpdate(
+      id,
+      { title, description },
+      { new: true }
+    );
+
+    res.json({
+      status: "Success",
+      message: "Post updated successfully",
+      updatedPost,
+    });
+
+
+
+
+
+
+  })
+
+
+
+
+
 };
 
 
