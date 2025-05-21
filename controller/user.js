@@ -137,22 +137,48 @@ const userCtrl = {
       return res.status(404).json({ message: "User Not Found" });
     }
 
-    // return res.status(200).json({ user, message: "Fetched Only my post" });
+    return res.status(200).json({ user, message: "Fetched Only my post" });
 
-    // ServerResponse(200, {user,  "Fetched Only my post" }, req, res);
+   
 
-    ServerResponse(200);
+
   }),
 
   EditProfile: asyncHandler(async (req, res) => {
-    const { username } = req.body;
+
+
+
+    const { username, email } = req.body;
+
+
+    //! Validations
+    if(!username || !email){
+      throw new Error("All fields are required");
+    }
+
+    
+    const userFound = await User.findById(req.user);
+
+
+    const {username1, email1} = userFound;
+
+
+    //! Check if the user is trying to update the same username and email
+
+    if(username1 === username || email1 === email){
+      return res.status(400).json({message:"No changes made"});
+    }
+
 
     //! Returned the document after updation takes place if new:true
     const updatedUser = await User.findByIdAndUpdate(
       req.user,
-      { username },
+      { username, email },
       { new: true }
     ).select("-posts -password");
+
+
+    // console.log(updatedUser);
 
     res.status(201).json({ message: "Updated Succesfully", user: updatedUser });
   }),
