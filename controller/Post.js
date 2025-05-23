@@ -159,7 +159,7 @@ const postCtrl = {
   searchPost: asyncHandler(async (req, res) => {
     const { query } = req;
 
-    const posts = await Post.find(query);
+    const posts = await Post.find(query).populate("author", "email");
 
     res.status(200).json({
       status: "Success",

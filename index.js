@@ -10,9 +10,10 @@ const userRoute = require("./Routes/users");
 
 const mongoose = require("mongoose");
 
-const errorHandler = require("./middleware/errHandler");
+// const errorHandler = require("./middleware/errHandler");
 
 const postRoute = require("./Routes/post");
+const errorHandler = require("./middleware/errHandler");
 
 const PORT = process.env.PORT || 3000;
 

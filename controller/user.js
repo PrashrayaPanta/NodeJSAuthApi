@@ -12,16 +12,16 @@ const userCtrl = {
   //!Register
 
   register: asyncHandler(async (req, res) => {
-    const { username, email, password } = req.body;
 
-    //! Validations
-    if (!username || !email || !password || req.files.length === 0) {
-      throw new Error("All fields are required");
-    }
 
-    console.log(req.body);
+      const { username, email, password } = req.body;
 
-    // Upload  each image public_id and Url in db
+      //! Validations
+      if (!username || !email || !password || req.files?.length === 0) {
+        throw new Error("All fields are required");
+      }
+
+         // Upload  each image public_id and Url in db
     const images = await Promise.all(
       req.files.map(async (file) => {
         console.log("Getted all the object for sending to db");
@@ -43,9 +43,7 @@ const userCtrl = {
       })
     );
 
-    // console.log(images)
 
-    // console.log(images)
 
     //! check if user alreday exist
 
@@ -56,34 +54,35 @@ const userCtrl = {
       throw new Error("This email has been already regfister");
     }
 
-    //! Hash the user password
 
-    const salt = await bcrypt.genSalt(10);
+     //! Hash the user password
 
-    const hashedPassword = await bcrypt.hash(password, salt);
+     const salt = await bcrypt.genSalt(10);
 
-    //! create the user
-
-    images.map(async (profileimage) => {
-      
-      const userCreated = await User.create({
-        username,
-        password: hashedPassword,
-        email,
-        profileImageUrl: profileimage.url,
-      });
-
-      console.log(userCreated);
-
-      //! send the response
-
-      res.json({
-        message: "Register Success",
-        username: userCreated.username,
-        email: userCreated.email,
-        id: userCreated._id,
-      });
-    });
+     const hashedPassword = await bcrypt.hash(password, salt);
+ 
+     //! create the user
+ 
+     images.map(async (profileimage) => {
+       
+       const userCreated = await User.create({
+         username,
+         password: hashedPassword,
+         email,
+         profileImageUrl: profileimage.url,
+       });
+ 
+       console.log(userCreated);
+ 
+       //! send the response
+ 
+       res.json({
+         message: "Register Success",
+         username: userCreated.username,
+         email: userCreated.email,
+         id: userCreated._id,
+       });
+     })   
   }),
 
   //!Login
@@ -217,5 +216,8 @@ const userCtrl = {
       .status(201);
   }),
 };
+
+
+
 
 module.exports = userCtrl;

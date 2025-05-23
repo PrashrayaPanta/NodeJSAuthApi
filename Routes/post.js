@@ -54,7 +54,6 @@ const upload = multer({
 postRoute.post(
   "/create",
   isAuthenticated,
-  // upload1.single("video"),
   upload.array("images"),
   postCtrl.createPost
 );

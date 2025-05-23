@@ -8,10 +8,6 @@ const userRoute = express.Router();
 
 
 const cloudinary = require("cloudinary").v2;
-
-
-
-
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const multer = require("multer");
 
@@ -63,5 +59,6 @@ userRoute.get("/profile", isAuthenticated, userCtrl.Profile);
 userRoute.put("/profile/edit", isAuthenticated, userCtrl.EditProfile);
 
 userRoute.put("/profile/password", isAuthenticated, userCtrl.EditPassword);
+
 
 module.exports = userRoute
