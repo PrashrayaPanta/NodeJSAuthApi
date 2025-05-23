@@ -13,6 +13,7 @@ const File = require("../model/File");
 const postCtrl = {
 
 
+
   createPost: asyncHandler(async (req, res) => {
 
     console.log("I am inside createPost")
@@ -159,7 +160,7 @@ const postCtrl = {
   searchPost: asyncHandler(async (req, res) => {
     const { query } = req;
 
-    const posts = await Post.find(query).populate("author", "email");
+    const posts = await Post.find(query).populate("author", "username email");
 
     res.status(200).json({
       status: "Success",
