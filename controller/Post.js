@@ -160,6 +160,7 @@ const postCtrl = {
   searchPost: asyncHandler(async (req, res) => {
     const { query } = req;
 
+    //! Populating the username and email only 
     const posts = await Post.find(query).populate("author", "username email");
 
     res.status(200).json({

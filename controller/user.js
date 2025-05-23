@@ -17,7 +17,7 @@ const userCtrl = {
       const { username, email, password } = req.body;
 
       //! Validations
-      if (!username || !email || !password || req.files?.length === 0) {
+      if (!username || !email || !password ) {
         throw new Error("All fields are required");
       }
 
